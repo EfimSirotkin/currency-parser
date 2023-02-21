@@ -22,6 +22,16 @@ class Branch:
     def updateBranchCurrencies(self, branchCurrencies):
         self.branchCurrencies = branchCurrencies
 
+    def getBranchCurrencies(self):
+        return self.branchCurrencies
+
+    def getBranchDataValues(self):
+        str = self.branchName + " " + self.branchAddress + "\n"
+        for currency in self.branchCurrencies:
+            str += currency.getCurrencyValues() + "\n"
+
+        return str
+
     def getBranchData(self):
         str = ""
         for currency in self.branchCurrencies:
