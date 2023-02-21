@@ -1,7 +1,8 @@
 import threading
 import telebot
+import time
 
-BOT_TOKEN = "YOUR_BOT_TOKEN"
+BOT_TOKEN = "YOUR_TOKEN_HERE"
 
 bot = telebot.TeleBot(BOT_TOKEN,threaded=False)
 
@@ -15,3 +16,7 @@ def polling():
 
 pollingThread = threading.Thread(target=polling)
 pollingThread.start()
+
+while True:
+    time.sleep(10)
+

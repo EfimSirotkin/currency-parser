@@ -1,25 +1,56 @@
 from bs4 import BeautifulSoup
 import URLReader
+import hashlib
+from Currency import Currency
+from Branch import Branch
+from FileManager import FileManager
+
+PARSE_BRANCHES = {"class":  "change-money__office"}
+PARSE_BRANCH_TYPES = {"class":  "change-money__office-name"}
+PARSE_BRANCH_ADDRESSES = {"class":  "change-money__office-adress"}
+PARSE_BRANCH_IDS = {"class":  "change-money__office-calculate"}
+PARSE_BRANCH_CURRENCIES = {"class":  "change-money__office-curency display"}
+
+currencyList = [ "RUB", "USD", "EUR" ]
+fileManager = FileManager()
 
 soup = BeautifulSoup(URLReader.getHtml(), 'html.parser')
-currencyList = [ "RUB", "USD", "EUR" ]
 
-parsedItems = soup.find_all("div", {"class":  "change-money__office"})
-print(parsedItems)
+parsedItems = soup.find_all("div", PARSE_BRANCHES)
+branchesList = []
 
 for item in parsedItems:
-    parsedBranch = item.find("div", {"class":  "change-money__office-name"}).find("h5").text
-    parsedAddress = item.find("div", {"class":  "change-money__office-adress"}).find("span").text
-    print(parsedBranch + "  " + parsedAddress)
-    currencies = item.find_all("div", {"class":  "change-money__office-curency display"})
+
+    parsedBranchName = item.find("div", PARSE_BRANCH_TYPES).find("h5").text
+    parsedBranchAddress = item.find("div", PARSE_BRANCH_ADDRESSES).find("span").text
+    parsedBranchID = item.find("div", PARSE_BRANCH_IDS)['data-filial-id']
+
+    print(parsedBranchID + "  " + parsedBranchName + "  " + parsedBranchAddress)
     
+    
+    currencies = item.find_all("div", PARSE_BRANCH_CURRENCIES)
+    curreniesList = []
+
     for currency in currencies:
         quantity = currency.find("div", {"class":  "unit"}).find("span").text
         if any (x in quantity for x in currencyList):
-            print(quantity)
+            #print(quantity)
             prices = currency.find_all("div", {"class":  "price"})
-            for price in prices:
-                print(price.find("p").text + " - " + price.find("span").text)
+            buyPrice = 0
+            sellPrice = 0
+            if prices[0].find("p").text == "покупка":
+                buyPrice = prices[0].find("span").text
+                sellPrice = prices[1].find("span").text
+            hash = (hashlib.md5((buyPrice + sellPrice).encode())).hexdigest()
+            curreniesList.append(Currency(buyPrice, sellPrice, hash, quantity))
+    
+    branchesList.append(Branch(branchID = parsedBranchID,
+                                branchName=parsedBranchName,
+                                branchAddress=parsedBranchAddress,
+                                branchCurrency=curreniesList))
 
-    print("********************")
+for branch in branchesList:
+    print(branch.getBranchData())
+    fileManager.writeBranchCurrency(branch)
 
+print("********************")
