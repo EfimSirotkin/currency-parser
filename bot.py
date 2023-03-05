@@ -1,17 +1,20 @@
 import threading
 import telebot
 import time
-import BranchesUtils
+import os
+
 import Analyzer
 
 from StatusBankParser import StatusBankParser
 from AlphaBankParser import AlphaBankParser
 from FileManager import FileManager
+from dotenv import load_dotenv
 
 
+load_dotenv()
 
-BOT_TOKEN = "YOUR_BOT_TOKEN"
-CHAT_ID = "YOUR_CHAT_ID"
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+CHAT_ID = os.getenv("CHAT_ID")
 
 ALPHA_DIR = "alpha_data"
 STATUS_DIR = "status_data"
