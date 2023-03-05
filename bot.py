@@ -10,8 +10,8 @@ from FileManager import FileManager
 
 
 
-BOT_TOKEN = "5827600216:AAHJAYJ7UMe19Z4M_WYojYjknDpMtJInMVM"
-CHAT_ID = 670909677
+BOT_TOKEN = "YOUR_BOT_TOKEN"
+CHAT_ID = "YOUR_CHAT_ID"
 
 ALPHA_DIR = "alpha_data"
 STATUS_DIR = "status_data"
