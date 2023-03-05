@@ -32,6 +32,9 @@ class Branch:
 
         return str
 
+    def getBranchFullName(self):
+        return self.branchName + " ," + self.branchAddress
+
     def getBranchData(self):
         str = ""
         for currency in self.branchCurrencies:

@@ -40,3 +40,8 @@ class FileManager:
             return False
 
     
+    def updateBranchFiles(self, branchesList):
+        for branch in branchesList:
+            self.writeBranchCurrency(branch)
+
+

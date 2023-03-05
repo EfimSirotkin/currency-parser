@@ -1,15 +1,26 @@
 import threading
 import telebot
 import time
+import BranchesUtils
+import Analyzer
 
 from StatusBankParser import StatusBankParser
+from AlphaBankParser import AlphaBankParser
 from FileManager import FileManager
 
-BOT_TOKEN = "YOUR_BOT_TOKEN"
-CHAT_ID = "Your CHAT ID"
+
+
+BOT_TOKEN = "5827600216:AAHJAYJ7UMe19Z4M_WYojYjknDpMtJInMVM"
+CHAT_ID = 670909677
+
+ALPHA_DIR = "alpha_data"
+STATUS_DIR = "status_data"
 
 statusParser = StatusBankParser()
-fileManager = FileManager()
+alphaParser = AlphaBankParser()
+
+statusFileManager = FileManager(STATUS_DIR)
+alphaFileManager = FileManager(ALPHA_DIR)
 
 bot = telebot.TeleBot(BOT_TOKEN,threaded=False)
 
@@ -24,17 +35,16 @@ def polling():
 pollingThread = threading.Thread(target=polling)
 pollingThread.start()
 
-branchesList = statusParser.parseStatusBank()
-for branch in branchesList:
-   fileManager.writeBranchCurrency(branch)
+#alphaBranchesList = alphaParser.parseAlphaBank()
+#alphaFileManager.updateBranchFiles(alphaBranchesList)
+
+#statusBranchesList = statusParser.parseStatusBank()
+#statusFileManager.updateBranchFiles(statusBranchesList)
+
 
 while True:
-    time.sleep(30)
+    time.sleep(2)
 
-    updatedBranchesList = statusParser.parseStatusBank()
-
-    for updatedBranch in updatedBranchesList:
-        if fileManager.compareBranchCurrencies(updatedBranch) == True:
-            print("***Обновление***\n" + updatedBranch.getBranchDataValues())
-            bot.send_message(CHAT_ID, "***Обновление***\n" + updatedBranch.getBranchDataValues())
-            fileManager.writeBranchCurrency(updatedBranch)
+    Analyzer.AnalyzeStatusBank(statusFileManager, statusParser, bot, CHAT_ID)
+    Analyzer.AnalyzeAlphaBank(alphaFileManager, alphaParser, bot, CHAT_ID)
+    
